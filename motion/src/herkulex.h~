@@ -1,0 +1,22 @@
+#ifndef HERKULEX_H
+#define HERKULEX_H
+
+#include <iostream>
+#include "serialUSB.cpp"
+#include <array>
+
+class servo
+{
+private:
+  int servo_id;
+  
+public:
+  servo(int servoid)
+  {
+    servo_id = servoid;
+  }
+    
+    int checksum1(int data[], int datalength);
+    int checksum2(int);
+    void set_led(int);
+};

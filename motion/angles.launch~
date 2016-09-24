@@ -1,0 +1,10 @@
+<launch>
+<node
+pkg="motion"
+type="parser_one_motor"
+/>
+<node
+pkg="motion"
+type="conveyor_one_motor"
+/>
+</launch>

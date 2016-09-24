@@ -1,0 +1,151 @@
+const int header 0xFF
+/*int servo::get_model(void)
+{
+  int data[9];
+  data[0]=0xFF; //header
+  data[1]=0xFF;
+  data[2]=0x09; //packet_size
+  data[3]=servo_id;
+  data[4]=EEP_READ_REQ;
+  data[5]=checksum1(data, datalength);
+  data[6]=checksum2(csm1);
+  data[7]=MODEL_NO1_EEP;
+  data[8]=BYTE1;
+  send_data(data); //to uart.h
+  return get_data(); //from uart.h
+}*/
+
+/*void servo::get_data()
+{
+  
+}*/
+
+int servo::checksum1(int data[], int datalength)
+{
+  unsigned int value_buffer=0;
+  for(int count=0; count<datalength; count++)
+    value_buffer = value_buffer ^ data[count];
+  return (value_buffer & 0xFE);
+}
+
+int servo::checksum2(int csm1)
+{
+  csm2 = (~csm1) & 0xFE;
+  return csm2;
+}
+
+float servo::scale(int input_value,int input_min,int input_max,int out_min, int out_max)
+{
+  int input_span = input_max - input_min;
+  int output_span = out_max - out_min;
+  float valuescaled = float(input_value - input_min) / float(input_span);
+  return out_min + (valuescaled * output_span);
+}
+
+/*int servo::get_servo_status(void)
+{
+  vector <unsigned int> data;
+  data.push_back(0x09);
+  data.push_back(servo_id);
+  data.push_back(EEP_READ_REQ);
+  data.push_back(MODEL_NO1_EEP);
+  data.push_back(BYTE1);
+  send_data(data);
+}*/
+
+int servo::torque_on(void)
+{
+  int datalength=6;
+  int data_var[datalength];
+  data_var[0]=0x0A; //packet_size
+  data_var[1]=servo_id;
+  data_var[2]=RAM_WRITE_REQ;
+  data_var[3]=TORQUE_CONTROL_RAM;
+  data_var[4]=0x01;
+  data_var[5]=0x60;
+  
+  csm1 = checksum1(data_var, datalength);
+  csm2 = checksum2(csm1);
+  int psize = 10;
+  int data[psize];
+  data[0] = header;
+  data[1] = header;
+  data[2] = data_var[0];
+  data[3] = data_var[1];
+  data[4] = data_var[2];
+  data[5] = csm1;
+  data[6] = csm2;
+  data[7] = data_var[3];
+  data[8] = data_var[4];
+  data[9] = data_var[5];
+  ser_obj.sendData(data, pSize);
+}
+
+int servo::torque_off(void)
+{
+  int datalength=6;
+  int data_var[datalength];
+  data_var[0]=0x0A; //packet_size
+  data_var[1]=servo_id;
+  data_var[2]=RAM_WRITE_REQ;
+  data_var[3]=TORQUE_CONTROL_RAM;
+  data_var[4]=0x01;
+  data_var[5]=0x00;
+  
+  csm1 = checksum1(data_var, datalength);
+  csm2 = checksum2(csm1);
+  int psize = 10;
+  int data[psize];
+  data[0] = header;
+  data[1] = header;
+  data[2] = data_var[0];
+  data[3] = data_var[1];
+  data[4] = data_var[2];
+  data[5] = csm1;
+  data[6] = csm2;
+  data[7] = data_var[3];
+  data[8] = data_var[4];
+  data[9] = data_var[5];
+  ser_obj.sendData(data, pSize);
+}
+
+/*int servo::get_servo_angle(void)
+{
+}*/
+
+int servo::set_servo_angle(int goalangle,int goaltime,int led)
+{
+  int goalposition_lsb=goalangle & 0x00FF; 				
+  int posMSB=(goalangle & 0XFF00) >> 8;
+  int datalength=8;
+  int data_var[datalength];
+  data_var[0]=0x0C; //packet_size
+  data_var[1]=servo_id;
+  data_var[2]=I_JOG_REQ;
+  data_var[3]=goalposition_lsb;
+  data_var[4]=goalposition_msb;
+  data_var[5]=led;
+  data_var[6]=servo_id;
+  data_var[7]=goaltime;
+  
+  csm1 = checksum1(data_var, datalength);
+  csm2 = checksum2(csm1);
+  int psize = 11;
+  int data[psize];
+  data[0] = header;
+  data[1] = header;
+  data[2] = data_var[0];
+  data[3] = data_var[1];
+  data[4] = data_var[2];
+  data[5] = csm1;
+  data[6] = csm2;
+  data[7] = data_var[3];
+  data[8] = data_var[4];
+  data[9] = data_var[5];
+  data[10] = data_var[6];
+  data[] = data_var[7];
+
+  ser_obj.sendData(data, pSize);	
+}
+
+

@@ -1,0 +1,12 @@
+<launch>
+<node
+pkg="motion"
+type="parser"
+name="angle_parser"
+/>
+<node
+pkg="motion"
+type="conveyor"
+name="communicator"
+/>
+</launch>
